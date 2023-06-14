@@ -54,18 +54,18 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((likes) => res.send(likes))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        const ERROR_CODE = 400;
+    .then((likes) => {
+      if (likes) {
+        res.send(likes);
+      } else {
+        const ERROR_CODE = 404;
 
         res.status(ERROR_CODE).send({ message: 'Данные для лайка карточки переданы неверно' });
-
-        return;
       }
-
+    })
+    .catch((err) => {
       if (err.name === 'CastError') {
-        const ERROR_CODE = 404;
+        const ERROR_CODE = 400;
 
         res.status(ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
 

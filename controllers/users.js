@@ -67,7 +67,7 @@ module.exports.updateUserInfo = (req, res) => {
     },
   )
     .then((user) => {
-      if (name.length > 1 && name.length < 31 && about.length > 1 && about.length < 31) {
+      if ((name.length > 1 && name.length < 31) || (about.length > 1 && about.length < 31)) {
         res.send({ data: user });
       } else {
         const ERROR_CODE = 400;
