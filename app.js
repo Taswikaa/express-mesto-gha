@@ -25,4 +25,8 @@ app.use(require('./routes/cards'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.patch('*', (req, res) => {
+  res.status(404).send({ message: 'Рута не существует' });
+});
+
 app.listen(PORT);
