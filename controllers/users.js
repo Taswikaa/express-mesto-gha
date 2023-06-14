@@ -64,17 +64,10 @@ module.exports.updateUserInfo = (req, res) => {
     { name, about },
     {
       new: true,
+      runValidators: true,
     },
   )
-    .then((user) => {
-      if ((name.length > 1 && name.length < 31) || (about.length > 1 && about.length < 31)) {
-        res.send({ data: user });
-      } else {
-        const ERROR_CODE = 400;
-
-        res.status(ERROR_CODE).send({ message: 'Данные для изменения информации о пользователе переданы неверно' });
-      }
-    })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const ERROR_CODE = 400;
