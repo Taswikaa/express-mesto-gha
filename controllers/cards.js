@@ -20,6 +20,8 @@ module.exports.createCard = (req, res) => {
         const ERROR_CODE = 400;
 
         res.status(ERROR_CODE).send({ message: 'Данные для создания карточки переданы неверно' });
+
+        return;
       }
 
       const ERROR_CODE = 500;
@@ -36,6 +38,8 @@ module.exports.deleteCard = (req, res) => {
         const ERROR_CODE = 404;
 
         res.status(ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
+
+        return;
       }
 
       const ERROR_CODE = 500;
@@ -56,12 +60,16 @@ module.exports.likeCard = (req, res) => {
         const ERROR_CODE = 400;
 
         res.status(ERROR_CODE).send({ message: 'Данные для лайка карточки переданы неверно' });
+
+        return;
       }
 
       if (err.name === 'CastError') {
         const ERROR_CODE = 404;
 
         res.status(ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
+
+        return;
       }
 
       const ERROR_CODE = 500;
@@ -82,12 +90,16 @@ module.exports.dislikeCard = (req, res) => {
         const ERROR_CODE = 400;
 
         res.status(ERROR_CODE).send({ message: 'Данные для дизлайка карточки переданы неверно' });
+
+        return;
       }
 
       if (err.name === 'CastError') {
         const ERROR_CODE = 404;
 
         res.status(ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
+
+        return;
       }
 
       const ERROR_CODE = 500;

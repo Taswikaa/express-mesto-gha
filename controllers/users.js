@@ -12,12 +12,22 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
+    .then((user) => {
+      if (user) {
+        res.send(user);
+      } else {
         const ERROR_CODE = 404;
 
         res.status(ERROR_CODE).send({ message: 'Пользователя с таким id не существует' });
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        const ERROR_CODE = 400;
+
+        res.status(ERROR_CODE).send({ message: 'Пользователя с таким id не существует' });
+
+        return;
       }
 
       const ERROR_CODE = 500;
@@ -36,6 +46,8 @@ module.exports.createUser = (req, res) => {
         const ERROR_CODE = 400;
 
         res.status(ERROR_CODE).send({ message: 'Данные для создания пользователя переданы неверно' });
+
+        return;
       }
 
       const ERROR_CODE = 500;
@@ -54,18 +66,30 @@ module.exports.updateUserInfo = (req, res) => {
       new: true,
     },
   )
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (name.length > 1 && name.length < 31 && about.length > 1 && about.length < 31) {
+        res.send({ data: user });
+      } else {
+        const ERROR_CODE = 400;
+
+        res.status(ERROR_CODE).send({ message: 'Данные для изменения информации о пользователе переданы неверно' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const ERROR_CODE = 400;
 
         res.status(ERROR_CODE).send({ message: 'Данные для изменения информации о пользователе переданы неверно' });
+
+        return;
       }
 
       if (err.name === 'CastError') {
         const ERROR_CODE = 404;
 
         res.status(ERROR_CODE).send({ message: 'Пользователя с таким id не существует' });
+
+        return;
       }
 
       const ERROR_CODE = 500;
@@ -90,12 +114,16 @@ module.exports.updateUserAvatar = (req, res) => {
         const ERROR_CODE = 400;
 
         res.status(ERROR_CODE).send({ message: 'Данные для изменения информации о пользователе переданы неверно' });
+
+        return;
       }
 
       if (err.name === 'CastError') {
         const ERROR_CODE = 404;
 
         res.status(ERROR_CODE).send({ message: 'Пользователя с таким id не существует' });
+
+        return;
       }
 
       const ERROR_CODE = 500;
