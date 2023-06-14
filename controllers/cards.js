@@ -6,7 +6,7 @@ module.exports.getCards = (req, res) => {
     .catch(() => {
       const ERROR_CODE = 500;
 
-      res.status(ERROR_CODE).send('Ошибка при получении карточек, на сервере произошла ошибка');
+      res.status(ERROR_CODE).send({ message: 'Ошибка при получении карточек, на сервере произошла ошибка' });
     });
 };
 
@@ -19,12 +19,12 @@ module.exports.createCard = (req, res) => {
       if (err.name === 'ValidationError') {
         const ERROR_CODE = 400;
 
-        res.status(ERROR_CODE).send('Данные для создания карточки переданы неверно');
+        res.status(ERROR_CODE).send({ message: 'Данные для создания карточки переданы неверно' });
       }
 
       const ERROR_CODE = 500;
 
-      res.status(ERROR_CODE).send('Ошибка при создании карточки, на сервере произошла ошибка');
+      res.status(ERROR_CODE).send({ message: 'Ошибка при создании карточки, на сервере произошла ошибка' });
     });
 };
 
@@ -35,12 +35,12 @@ module.exports.deleteCard = (req, res) => {
       if (err.name === 'CastError') {
         const ERROR_CODE = 404;
 
-        res.status(ERROR_CODE).send('Карточка с указанным id не найдена');
+        res.status(ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
       }
 
       const ERROR_CODE = 500;
 
-      res.status(ERROR_CODE).send('Ошибка при удалении карточки, на сервере произошла ошибка');
+      res.status(ERROR_CODE).send({ message: 'Ошибка при удалении карточки, на сервере произошла ошибка' });
     });
 };
 
@@ -55,18 +55,18 @@ module.exports.likeCard = (req, res) => {
       if (err.name === 'ValidationError') {
         const ERROR_CODE = 400;
 
-        res.status(ERROR_CODE).send('Данные для лайка карточки переданы неверно');
+        res.status(ERROR_CODE).send({ message: 'Данные для лайка карточки переданы неверно' });
       }
 
       if (err.name === 'CastError') {
         const ERROR_CODE = 404;
 
-        res.status(ERROR_CODE).send('Карточка с указанным id не найдена');
+        res.status(ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
       }
 
       const ERROR_CODE = 500;
 
-      res.status(ERROR_CODE).send('Ошибка при лайке карточки, на сервере произошла ошибка');
+      res.status(ERROR_CODE).send({ message: 'Ошибка при лайке карточки, на сервере произошла ошибка' });
     });
 };
 
@@ -81,17 +81,17 @@ module.exports.dislikeCard = (req, res) => {
       if (err.name === 'ValidationError') {
         const ERROR_CODE = 400;
 
-        res.status(ERROR_CODE).send('Данные для дизлайка карточки переданы неверно');
+        res.status(ERROR_CODE).send({ message: 'Данные для дизлайка карточки переданы неверно' });
       }
 
       if (err.name === 'CastError') {
         const ERROR_CODE = 404;
 
-        res.status(ERROR_CODE).send('Карточка с указанным id не найдена');
+        res.status(ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
       }
 
       const ERROR_CODE = 500;
 
-      res.status(ERROR_CODE).send('Ошибка при дизлайке карточки, на сервере произошла ошибка');
+      res.status(ERROR_CODE).send({ message: 'Ошибка при дизлайке карточки, на сервере произошла ошибка' });
     });
 };
