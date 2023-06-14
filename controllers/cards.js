@@ -88,7 +88,7 @@ module.exports.dislikeCard = (req, res) => {
       if (likes) {
         res.send(likes);
       } else {
-        const ERROR_CODE = 400;
+        const ERROR_CODE = 404;
 
         res.status(ERROR_CODE).send({ message: 'Данные для дизлайка карточки переданы неверно' });
       }
