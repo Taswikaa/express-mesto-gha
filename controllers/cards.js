@@ -32,10 +32,18 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (card) {
+        res.send(card);
+      } else {
+        const ERROR_CODE = 404;
+
+        res.status(ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        const ERROR_CODE = 404;
+        const ERROR_CODE = 400;
 
         res.status(ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
 
