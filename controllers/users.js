@@ -103,14 +103,6 @@ module.exports.updateUserAvatar = (req, res) => {
         return;
       }
 
-      if (err.name === 'CastError') {
-        const ERROR_CODE = 404;
-
-        res.status(ERROR_CODE).send({ message: 'Пользователя с таким id не существует' });
-
-        return;
-      }
-
       const ERROR_CODE = 500;
 
       res.status(ERROR_CODE).send({ message: 'Ошибка при изменении информации о пользователе, на сервере произошла ошибка' });
