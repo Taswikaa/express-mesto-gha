@@ -40,7 +40,7 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const ERROR_CODE = 400;
@@ -73,14 +73,6 @@ module.exports.updateUserInfo = (req, res) => {
         const ERROR_CODE = 400;
 
         res.status(ERROR_CODE).send({ message: 'Данные для изменения информации о пользователе переданы неверно' });
-
-        return;
-      }
-
-      if (err.name === 'CastError') {
-        const ERROR_CODE = 404;
-
-        res.status(ERROR_CODE).send({ message: 'Пользователя с таким id не существует' });
 
         return;
       }
