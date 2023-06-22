@@ -4,6 +4,7 @@ const User = require('../models/users');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
+const UnauthorizedError = require('../errors/unauthorized-error');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -117,15 +118,18 @@ module.exports.login = (req, res, next) => {
   return User.findUser(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'c0e93f2d3d88bacea4c540ff0c6a64c12bfebbfe78d0f77b41e85975521d9437', {
-        expiresIn: '1d',
+        expiresIn: '7d',
       });
 
       res.cookie('jwt', token, {
-        maxAge: 20,
+        maxAge: 3600,
         httpOnly: true,
       });
 
-      res.send(token);
+      res.send({ jwt: token });
+    })
+    .catch((err) => {
+      throw new UnauthorizedError(err.message);
     })
     .catch(next);
 };
