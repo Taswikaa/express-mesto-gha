@@ -15,7 +15,11 @@ router.get('/users', auth, getUsers);
 
 router.get('/users/me', auth, getCurrentUser);
 
-router.get('/users/:userId', auth, getUser);
+router.get('/users/:userId', auth, celebrate({
+  params: Joi.object().keys({
+    user: Joi.string().min(24).max(24),
+  }),
+}), getUser);
 
 router.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -42,7 +46,7 @@ router.patch('/users/me/avatar', auth, celebrate({
 
 router.post('/signin', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().email(),
+    email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
 }), login);
