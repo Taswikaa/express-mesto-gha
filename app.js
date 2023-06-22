@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const NotFoundError = require('./errors/not-found-error');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -12,10 +13,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(require('./routes/index'));
 
-app.patch('*', (req, res) => {
-  const ERROR_CODE = 404;
-
-  res.status(ERROR_CODE).send({ message: 'Рута не существует' });
+app.patch('*', () => {
+  throw new NotFoundError('Рута не существует');
 });
 
 app.use(errors());

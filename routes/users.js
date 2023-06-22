@@ -1,3 +1,4 @@
+const { isObjectIdOrHexString } = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
@@ -11,13 +12,20 @@ const {
   getCurrentUser,
 } = require('../controllers/users');
 
+const checkId = (value) => {
+  if (!isObjectIdOrHexString(value)) {
+    throw new Error(`${value} is not user id`);
+  }
+  return value;
+};
+
 router.get('/users', auth, getUsers);
 
 router.get('/users/me', auth, getCurrentUser);
 
 router.get('/users/:userId', auth, celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().min(24).max(24),
+    userId: Joi.string().custom(checkId),
   }),
 }), getUser);
 

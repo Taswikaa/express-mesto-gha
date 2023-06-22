@@ -14,9 +14,6 @@ module.exports.createCard = (req, res, next) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send(card))
-    .catch(() => {
-      throw new BadRequestError('Данные для создания карточки переданы неверно');
-    })
     .catch(next);
 };
 
@@ -41,8 +38,7 @@ module.exports.deleteCard = (req, res, next) => {
       }
 
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.likeCard = (req, res, next) => {
@@ -63,8 +59,7 @@ module.exports.likeCard = (req, res, next) => {
       }
 
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -85,6 +80,5 @@ module.exports.dislikeCard = (req, res, next) => {
       }
 
       next(err);
-    })
-    .catch(next);
+    });
 };

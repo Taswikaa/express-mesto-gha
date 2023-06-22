@@ -1,3 +1,4 @@
+const { isObjectIdOrHexString } = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
@@ -8,6 +9,13 @@ const {
   likeCard,
   dislikeCard,
 } = require('../controllers/cards');
+
+const checkId = (value) => {
+  if (!isObjectIdOrHexString(value)) {
+    throw new Error(`${value} is not card id`);
+  }
+  return value;
+};
 
 router.get('/cards', auth, getCards);
 
@@ -26,13 +34,13 @@ router.delete('/cards/:cardId', auth, celebrate({
 
 router.put('/cards/:cardId/likes', auth, celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().min(24).max(24),
+    cardId: Joi.string().custom(checkId),
   }),
 }), likeCard);
 
 router.delete('/cards/:cardId/likes', auth, celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().min(24).max(24),
+    cardId: Joi.string().custom(checkId),
   }),
 }), dislikeCard);
 

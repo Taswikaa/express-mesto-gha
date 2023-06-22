@@ -1,7 +1,7 @@
 {
   "name": "mesto-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Бэкенд проекта место на express",
   "main": "app.js",
   "scripts": {
     "lint": "npx eslint .",

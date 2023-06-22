@@ -4,14 +4,10 @@ const User = require('../models/users');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
-const UnauthorizedError = require('../errors/unauthorized-error');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      if (!users) {
-        throw new Error();
-      }
       res.send({ data: users });
     })
     .catch(next);
@@ -31,8 +27,7 @@ module.exports.getUser = (req, res, next) => {
       }
 
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -64,8 +59,9 @@ module.exports.createUser = (req, res, next) => {
           if (err.code === 11000) {
             throw new ConflictError('Этот адрес уже исползуется');
           }
-        })
-        .catch(next);
+
+          next(err);
+        });
     })
     .catch(next);
 };
@@ -88,9 +84,6 @@ module.exports.updateUserInfo = (req, res, next) => {
     },
   )
     .then((user) => res.send({ data: user }))
-    .catch(() => {
-      throw new BadRequestError('Данные для изменения информации о пользователе переданы неверно');
-    })
     .catch(next);
 };
 
@@ -106,9 +99,6 @@ module.exports.updateUserAvatar = (req, res, next) => {
     },
   )
     .then((user) => res.send({ data: user }))
-    .catch(() => {
-      throw new BadRequestError('Данные для изменения информации о пользователе переданы неверно');
-    })
     .catch(next);
 };
 
@@ -127,9 +117,6 @@ module.exports.login = (req, res, next) => {
       });
 
       res.send({ jwt: token });
-    })
-    .catch((err) => {
-      throw new UnauthorizedError(err.message);
     })
     .catch(next);
 };
