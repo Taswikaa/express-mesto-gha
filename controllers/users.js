@@ -53,14 +53,12 @@ module.exports.createUser = (req, res, next) => {
         .then((user) => res.status(201).send({ data: user }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            throw new BadRequestError('Данные для создания пользователя переданы неверно');
+            next(BadRequestError('Данные для создания пользователя переданы неверно'));
           }
 
           if (err.code === 11000) {
-            throw new ConflictError('Этот адрес уже исползуется');
+            next(new ConflictError('Этот адрес уже исползуется'));
           }
-
-          next(err);
         });
     })
     .catch(next);
