@@ -31,10 +31,16 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (card) {
-        res.send(card);
+        if (!(req.user._id === card.owner._id.toString())) {
+          res.status(403).send('nondelete');
+          return;
+        }
+
+        Card.findByIdAndRemove(req.params.cardId)
+          .then((card1) => res.send(card1));
       } else {
         const ERROR_CODE = 404;
 
