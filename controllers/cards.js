@@ -39,6 +39,8 @@ module.exports.deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Карточка с указанным id не найдена');
       }
+
+      next(err);
     })
     .catch(next);
 };
@@ -59,6 +61,8 @@ module.exports.likeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Карточка с указанным id не найдена');
       }
+
+      next(err);
     })
     .catch(next);
 };
