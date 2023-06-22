@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -15,6 +16,17 @@ app.patch('*', (req, res) => {
   const ERROR_CODE = 404;
 
   res.status(ERROR_CODE).send({ message: 'Рута не существует' });
+});
+
+app.use(errors());
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  const errorMessage = statusCode === 500 ? 'На сервере произошла ошибка' : message;
+
+  res.status(statusCode).send({ message: errorMessage });
 });
 
 app.listen(PORT);

@@ -1,44 +1,40 @@
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
+const NotFoundError = require('../errors/not-found-error');
+const BadRequestError = require('../errors/bad-request-error');
+const ConflictError = require('../errors/conflict-error');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch(() => {
-      const ERROR_CODE = 500;
-
-      res.status(ERROR_CODE).send({ message: 'Ошибка при получение пользователей, на сервере произошла ошибка' });
-    });
+    .then((users) => {
+      if (!users) {
+        throw new Error();
+      }
+      res.send({ data: users });
+    })
+    .catch(next);
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (user) {
-        res.send(user);
-      } else {
-        const ERROR_CODE = 404;
-
-        res.status(ERROR_CODE).send({ message: 'Пользователя с таким id не существует' });
+      if (!user) {
+        throw new NotFoundError('Пользователя с таким id не существует');
       }
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        const ERROR_CODE = 400;
-
-        res.status(ERROR_CODE).send({ message: 'Пользователя с таким id не существует' });
-
-        return;
+        throw new BadRequestError('Пользователя с таким id не существует');
       }
 
-      const ERROR_CODE = 500;
-
-      res.status(ERROR_CODE).send({ message: 'Ошибка при получении пользователя, на сервере произошла ошибка' });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name,
     about,
@@ -61,27 +57,25 @@ module.exports.createUser = (req, res) => {
         .then((user) => res.status(201).send({ data: user }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            const ERROR_CODE = 400;
-
-            res.status(ERROR_CODE).send({ message: 'Данные для создания пользователя переданы неверно' });
-
-            return;
+            throw new BadRequestError('Данные для создания пользователя переданы неверно');
           }
 
-          const ERROR_CODE = 500;
-
-          res.status(ERROR_CODE).send({ message: 'Ошибка при создании пользователя, на сервере произошла ошибка' });
-        });
-    });
+          if (err.code === 11000) {
+            throw new ConflictError('Этот адрес уже исползуется');
+          }
+        })
+        .catch(next);
+    })
+    .catch(next);
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.send(user))
-    .catch(() => res.status(404).send('Не тот id'));
+    .catch(next);
 };
 
-module.exports.updateUserInfo = (req, res) => {
+module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
@@ -93,22 +87,13 @@ module.exports.updateUserInfo = (req, res) => {
     },
   )
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        const ERROR_CODE = 400;
-
-        res.status(ERROR_CODE).send({ message: 'Данные для изменения информации о пользователе переданы неверно' });
-
-        return;
-      }
-
-      const ERROR_CODE = 500;
-
-      res.status(ERROR_CODE).send({ message: 'Ошибка при изменении информации о пользователе, на сервере произошла ошибка' });
-    });
+    .catch(() => {
+      throw new BadRequestError('Данные для изменения информации о пользователе переданы неверно');
+    })
+    .catch(next);
 };
 
-module.exports.updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
@@ -116,25 +101,17 @@ module.exports.updateUserAvatar = (req, res) => {
     { avatar },
     {
       new: true,
+      runValidators: true,
     },
   )
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        const ERROR_CODE = 400;
-
-        res.status(ERROR_CODE).send({ message: 'Данные для изменения информации о пользователе переданы неверно' });
-
-        return;
-      }
-
-      const ERROR_CODE = 500;
-
-      res.status(ERROR_CODE).send({ message: 'Ошибка при изменении информации о пользователе, на сервере произошла ошибка' });
-    });
+    .catch(() => {
+      throw new BadRequestError('Данные для изменения информации о пользователе переданы неверно');
+    })
+    .catch(next);
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUser(email, password)
@@ -150,9 +127,5 @@ module.exports.login = (req, res) => {
 
       res.send(token);
     })
-    .catch((err) => {
-      const ERROR_CODE = 401;
-
-      res.status(ERROR_CODE).send({ message: err.message });
-    });
+    .catch(next);
 };
