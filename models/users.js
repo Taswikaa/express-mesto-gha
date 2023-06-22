@@ -3,6 +3,9 @@ const bcryptjs = require('bcryptjs');
 const validator = require('validator');
 const UnauthorizedError = require('../errors/unauthorized-error');
 
+mongoose.set('toObject', { useProjection: true });
+mongoose.set('toJSON', { useProjection: true });
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,

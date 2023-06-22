@@ -1,7 +1,6 @@
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
-const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
@@ -20,17 +19,7 @@ module.exports.getUsers = (req, res, next) => {
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователя с таким id не существует');
-      }
       res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new BadRequestError('Пользователя с таким id не существует');
-      }
-
-      next(err);
     })
     .catch(next);
 };
