@@ -34,10 +34,10 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Карточка с указанным id не найдена');
+        return next(new BadRequestError('Карточка с указанным id не найдена'));
       }
 
-      next(err);
+      return next(err);
     });
 };
 
@@ -55,10 +55,10 @@ module.exports.likeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Карточка с указанным id не найдена');
+        return next(new BadRequestError('Карточка с указанным id не найдена'));
       }
 
-      next(err);
+      return next(err);
     });
 };
 
@@ -76,9 +76,9 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Карточка с указанным id не найдена');
+        return next(new BadRequestError('Карточка с указанным id не найдена'));
       }
 
-      next(err);
+      return next(err);
     });
 };

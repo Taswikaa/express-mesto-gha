@@ -28,7 +28,7 @@ router.post('/cards', auth, celebrate({
 
 router.delete('/cards/:cardId', auth, celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().min(24).max(24),
+    cardId: Joi.string().custom(checkId),
   }),
 }), deleteCard);
 

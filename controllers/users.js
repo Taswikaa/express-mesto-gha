@@ -23,10 +23,10 @@ module.exports.getUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Пользователя с таким id не существует');
+        return next(new BadRequestError('Пользователя с таким id не существует'));
       }
 
-      next(err);
+      return next(err);
     });
 };
 
@@ -53,12 +53,14 @@ module.exports.createUser = (req, res, next) => {
         .then((user) => res.status(201).send({ data: user }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            next(BadRequestError('Данные для создания пользователя переданы неверно'));
+            return next(new BadRequestError('Данные для создания пользователя переданы неверно'));
           }
 
           if (err.code === 11000) {
-            next(new ConflictError('Этот адрес уже исползуется'));
+            return next(new ConflictError('Этот адрес уже используется'));
           }
+
+          return next(err);
         });
     })
     .catch(next);
